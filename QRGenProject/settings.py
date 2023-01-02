@@ -13,14 +13,13 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 
-import django_heroku
-import cloudinary_storage
-
 import environ
 import os
 
+import dj_database_url
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = 'RENDER' not in os.environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,10 +43,18 @@ else:
         'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
     }
 
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 
 # Application definition
 
@@ -69,8 +76,6 @@ INSTALLED_APPS = [
     # third-party libraries
     'cloudinary_storage',
     'cloudinary',
-    # 'rest_framework',
-
 ]
 
 MIDDLEWARE = [
@@ -110,10 +115,10 @@ WSGI_APPLICATION = 'QRGenProject.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default='postgresql://postgres:postgres@localhost:5432/qr59',
+        conn_max_age=600
+    )
 }
 
 
@@ -152,7 +157,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 STATICFILES_DIR = [
     os.path.join(BASE_DIR, 'static'),
@@ -169,5 +173,3 @@ STATICFILES_FINDERS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
-
-django_heroku.settings(locals())

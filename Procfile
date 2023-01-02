@@ -1,1 +1,0 @@
-web: gunicorn QRGenProject.wsgi --log-file -
