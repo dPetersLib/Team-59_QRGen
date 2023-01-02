@@ -116,7 +116,7 @@ WSGI_APPLICATION = 'QRGenProject.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost:5432/qr59',
+        default='postgresql://postgres:postgres@db:5432/db',
         conn_max_age=600
     )
 }
