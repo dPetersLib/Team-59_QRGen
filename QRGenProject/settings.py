@@ -19,41 +19,47 @@ import os
 import dj_database_url
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'RENDER' not in os.environ
+DEBUG = False
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-    
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-if DEBUG:
-    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-    MEDIA_ROOT = BASE_DIR / 'media/'
 
-else:
-    MEDIA_ROOT = 'https://res.cloudinary.com/dpeters/image/upload/v1/media/'
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# if not DEBUG:
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+MEDIA_ROOT = BASE_DIR / 'media/'
 
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# else:
+#     MEDIA_ROOT = 'https://res.cloudinary.com/dpeters/image/upload/v1/media/'
+#     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+#     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
     # CLOUDINARY
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-        'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
-    }
 
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+    # CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
+
+    # CLOUDINARY_STORAGE = {
+    #     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    #     'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    #     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
+    # }
+
+    # CLOUDINARY_PROXY = {
+    #     'http': 'proxy.server:3128',
+    #     'https': 'proxy.server:3128',
+    #     'no': ['127.0.0.1']
+    # }
+
+
+    # STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
-ALLOWED_HOSTS = []
-
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -112,13 +118,17 @@ WSGI_APPLICATION = 'QRGenProject.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+# https://docs.djangoproject.com/en/4.0/ref/settings/#database
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@db:5432/db',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'qrgen59$qrgen',
+        'USER': 'qrgen59',
+        'PASSWORD': 'i4gteam59',
+        'HOST': 'qrgen59.mysql.pythonanywhere-services.com',
+        'PORT': '3306',
+    }
 }
 
 

@@ -1,5 +1,4 @@
 asgiref==3.6.0
-backports.zoneinfo==0.2.1
 certifi==2022.12.7
 charset-normalizer==2.1.1
 cloudinary==1.29.0
@@ -20,3 +19,4 @@ sqlparse==0.4.2
 tzdata==2022.2
 urllib3==1.26.11
 whitenoise==6.2.0
+mysqlclient

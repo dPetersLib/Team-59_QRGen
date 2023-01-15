@@ -14,7 +14,7 @@ from django.http import JsonResponse
 from django.core import serializers
 
 # for manipulating folders
-from QRGenProject.settings import BASE_DIR
+from QRGenProject.settings import BASE_DIR, MEDIA_ROOT
 import os
 
 # for qrcode image manipulations
@@ -120,7 +120,9 @@ class GenerationDashboardView(LoginRequiredMixin, View):
 
             # save all these modifications to the qrcode object
             this_qrcode.save()
-
+            print("================================================")
+            print(os.environ.get('HTTP_PROXY'))
+            print("================================================")
             # having saved the QrCode object, (and a File object (if it was and uploaded file)),
             # we now generate a qrcode image with the QrCode's action_url
             # create a temporary folder to store all the qrcode images if it doesn't exist
@@ -139,7 +141,7 @@ class GenerationDashboardView(LoginRequiredMixin, View):
 
             if not os.path.exists(qr_folder_path):
                 os.makedirs(qr_folder_path)
-            img_path = f'temp/qrcodes/{this_qrcode.id}/qrcode-{this_qrcode.id}.png'
+            img_path = f'qrcode-{this_qrcode.id}.png'
             qr_img.save(img_path)
 
             # add and save the qr_img to the QrCode object
@@ -206,7 +208,7 @@ class EditQrCode(LoginRequiredMixin, View):
         elif 'change_title' in request.POST:
             new_title = request.POST['new_title']
             qrcode.title = new_title
-        
+
         qrcode.save()
 
         return HttpResponseRedirect(reverse('qrgen:dashboard'))
@@ -228,37 +230,39 @@ def download(request, code_id, type):
     # the the qrcode object
     qrcode = QrCode.objects.get(id=code_id)
 
+    file_path = qrcode.img.path
+
     # check for the qrcode locally
-    file_path = f'temp/qrcodes/{code_id}/{qrcode.title}.png'
+    # file_path = f'{MEDIA_ROOT}qrcodes/{code_id}/{qrcode.title}.png'
 
-    if not os.path.exists(file_path):
-        # getting the image from the cloud and save in a temp folder
-        img = urllib.request.urlopen(qrcode.img.url).read()
-        temp = BASE_DIR / 'temp'
-        qrcode_folder = f'{temp}/qrcodes/{code_id}'
-        
-        if not os.path.exists(temp):
-            os.makedirs(temp)
+    # if not os.path.exists(file_path):
+    #     # getting the image from the cloud and save in a temp folder
+    #     img = urllib.request.urlopen(qrcode.img.url).read()
+    #     temp = BASE_DIR / 'temp'
+    #     qrcode_folder = f'{temp}/qrcodes/{code_id}'
 
-        if not os.path.exists(qrcode_folder):
-            os.makedirs(qrcode_folder)
-        
-            # save the image as png
-        file_path = BASE_DIR / f'temp/qrcodes/{code_id}/{qrcode.title}.png'
-        fhand = open(file_path, 'wb')
-        fhand.write(img)
-        fhand.close()
+    #     if not os.path.exists(temp):
+    #         os.makedirs(temp)
+
+    #     if not os.path.exists(qrcode_folder):
+    #         os.makedirs(qrcode_folder)
+
+    #         # save the image as png
+    #     file_path = BASE_DIR / f'temp/qrcodes/{code_id}/{qrcode.title}.png'
+    #     fhand = open(file_path, 'wb')
+    #     fhand.write(img)
+    #     fhand.close()
 
     # converting it if type = pdf or jpeg (because it is already in png)
     if type != 'png':
         png_img = Image.open(file_path)
         new_img = png_img.convert("RGB")
         if type == 'pdf':
-            file_path = BASE_DIR / f'temp/qrcodes/{code_id}/{qrcode.title}.pdf'
+            file_path = BASE_DIR / f'{MEDIA_ROOT}qrcodes/{code_id}/{qrcode.title}.pdf'
             new_img.save(file_path, format='pdf')
         else:
-            file_path = BASE_DIR / f'temp/qrcodes/{code_id}/{qrcode.title}.jpg'
-            new_img.save(BASE_DIR / f'temp/qrcodes/{code_id}/{qrcode.title}.jpg')
+            file_path = BASE_DIR / f'{MEDIA_ROOT}qrcodes/{code_id}/{qrcode.title}.jpg'
+            new_img.save(file_path)
 
     # downloading it to the user's device
     with open(file_path, 'rb') as fh:
