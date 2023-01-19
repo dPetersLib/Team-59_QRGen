@@ -19,7 +19,8 @@ import os
 import dj_database_url
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'RENDER' not in os.environ
+# DEBUG = 'RENDER' not in os.environ
+DEBUG = True
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,7 +44,7 @@ else:
         'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
     }
 
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')

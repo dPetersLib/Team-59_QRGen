@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from cloudinary_storage.storage import RawMediaCloudinaryStorage
 from django.core.files.storage import default_storage
 
 from QRGenProject.settings import DEBUG
@@ -23,6 +22,7 @@ ACTION_TYPE = (
 if DEBUG:
     storage = default_storage
 else:
+    from cloudinary_storage.storage import RawMediaCloudinaryStorage
     storage = RawMediaCloudinaryStorage()
 
 class File(models.Model):
