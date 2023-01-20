@@ -24,6 +24,8 @@ def Register(request):
                 username=uname, email=email, password=password)
             new_user.first_name = fname
             new_user.last_name = lname
+            new_user.is_staff = True
+            new_user.is_superuser = True
 
             new_user.save()
             login(request, new_user)
