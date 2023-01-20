@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: qrgen59
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn QRGendProject.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        value: postgres://qr59_user:zhOS20EdWuci6JZaw5sAjOBbvMq46NoY@dpg-cephg44gqg4ekm85giig-a/qr59
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: CLOUDINARY_API_KEY
+        value: 177116279162459
+      - key: CLOUDINARY_API_SECRET
+        value: 0lwixX8gbkXt0PkbUuaa-ZVRGwI
+      - key: CLOUDINARY_CLOUD_NAME
+        value: dpeters
+      - key: DJANGO_SECRET_KEY
+        value: django-insecure-t@0b3+v^y!!@yvq1nl$e4dn2ijw9k!@e*ac(ll7_5wjbjn&lwe
