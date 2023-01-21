@@ -52,7 +52,7 @@ def dynamic_code_scan(request, code_id, *args, **kwargs):
         else:
             # if it was an uploaded file (if qrcode.type in uploads)
 
-            return HttpResponseRedirect(reverse('handle_scan:download', kwargs={'file_id': qrcode.file.pk}))
+            return HttpResponseRedirect(reverse('handlescan:download', kwargs={'file_id': qrcode.file.pk}))
 
 
 def download(request, file_id):
