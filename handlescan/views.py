@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 import os
 from django.http import HttpResponse, Http404, HttpResponseRedirect
-
+from django.urls import reverse
 from qrgen.models import QrCode, File
 
 # for file download
@@ -47,12 +47,12 @@ def dynamic_code_scan(request, code_id, *args, **kwargs):
             # for text input
             # 
             # return redirect()
-            pass
+            return HttpResponseRedirect(reverse('qrgen:dashboard'))
             
         else:
             # if it was an uploaded file (if qrcode.type in uploads)
 
-            return HttpResponseRedirect('download', args(qrcode.file_id, ))
+            return HttpResponseRedirect(reverse('handle_scan:download', kwargs={'file_id': qrcode.file.pk}))
 
 
 def download(request, file_id):
