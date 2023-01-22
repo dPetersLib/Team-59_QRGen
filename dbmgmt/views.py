@@ -22,29 +22,43 @@ def backup_db(request):
     qrtypes = list(QrType.objects.values())
 
     data = [users, files, qrcodes, qrtypes]
+    json_files = ['users.json', 'files.json', 'qrcodes.json', 'qrtypes.json']
 
-    for x in data:
-        for entry in x:
-            entry.__delitem__('id')
+    try:
+        for x in data:
+            for entry in x:
+                entry.__delitem__('id')
 
-    if not os.path.exists(DB_FOLDER):
-        os.mkdir(DB_FOLDER)
-    
-    with open(os.path.join(DB_FOLDER, 'users.json'), 'w') as file:
-        json.dump(users, file, default=encoder)
+        if not os.path.exists(DB_FOLDER):
+            os.mkdir(DB_FOLDER)
+        
+        with open(os.path.join(DB_FOLDER, 'users.json'), 'w') as file:
+            json.dump(users, file, default=encoder)
 
-    with open(os.path.join(DB_FOLDER, 'files.json'), 'w') as file:
-        json.dump(files, file, default=encoder) 
+        with open(os.path.join(DB_FOLDER, 'files.json'), 'w') as file:
+            json.dump(files, file, default=encoder) 
 
-    with open(os.path.join(DB_FOLDER, 'qrcodes.json'), 'w') as file:
-        json.dump(qrcodes, file, default=encoder)
+        with open(os.path.join(DB_FOLDER, 'qrcodes.json'), 'w') as file:
+            json.dump(qrcodes, file, default=encoder)
 
-    with open(os.path.join(DB_FOLDER, 'qrtypes.json'), 'w') as file:
-        json.dump(qrtypes, file, default=encoder)
-    
-    print("=" * 20)
-    print("BACKUP SUCCESSFUL")
-    print("=" * 20)
+        with open(os.path.join(DB_FOLDER, 'qrtypes.json'), 'w') as file:
+            json.dump(qrtypes, file, default=encoder)
+        
+        for file in json_files:
+            File.objects.create(
+                user=request.user,
+                name=f'{file}_backup',
+                file=os.path.join(DB_FOLDER, file)
+            )
+        
+        print("=" * 20)
+        print("BACKUP SUCCESSFUL")
+        print("=" * 20)
+
+    except:
+        print("=" * 20)
+        print("BACKUP FAILED")
+        print("=" * 20)
 
     return HttpResponseRedirect(reverse('qrgen:dashboard'))
 
