@@ -62,6 +62,22 @@
           <img src="{% static 'img/image/icon/active-icon.png' %}" alt="" />
           <button>Active ({{active_count}})</button>
         </div>
+        {% if request.user.is_staff %}
+        <div class="">
+            <img src="{% static 'img/image/icon/log-out-icon.png' %}" alt="" />
+            <a href="{% url 'dbmgmt:backup_db' %}"><button>
+                <p>Backup Database</p>
+            </button>
+            </a>
+        </div>
+        <div class="">
+            <img src="{% static 'img/image/icon/log-out-icon.png' %}" alt="" />
+            <a href="{% url 'dbmgmt:restore_db' %}"><button>
+                <p>Restore Database</p>
+            </button>
+            </a>
+        </div>
+        {% endif %}
       </div>
       <div class="logout_btn">
         <a href="{% url 'accounts:logout' %}"><button>
