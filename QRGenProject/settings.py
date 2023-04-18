@@ -18,22 +18,21 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DEBUG = 'RENDER' not in os.environ
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'RENDER' not in os.environ
+ADMIN_AUTH_TOKEN = os.environ.get('AUTH_TOKEN')
 
 if DEBUG:
     environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
     MEDIA_ROOT = BASE_DIR / 'media/'
 
 else:
-    MEDIA_ROOT = 'https://res.cloudinary.com/dpeters/image/upload/v1/media/'
+    MEDIA_ROOT = os.environ.get('MEDIA_ROOT')
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -45,9 +44,6 @@ else:
         'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
         'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
     }
-
-
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 ALLOWED_HOSTS = []
 
@@ -113,16 +109,10 @@ WSGI_APPLICATION = 'QRGenProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
     'default': dj_database_url.config(
         # Feel free to alter this value to suit your needs.
-        default='postgres://qr59_user:zhOS20EdWuci6JZaw5sAjOBbvMq46NoY@dpg-cephg44gqg4ekm85giig-a/qr59',
+        default=os.environ.get('DATABASE_URL'),
         conn_max_age=600
     )
 }
